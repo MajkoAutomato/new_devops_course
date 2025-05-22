@@ -1,4 +1,4 @@
-name: Deploy to Kubernetes
+name: Deploy via SSH to VPS
 
 on:
   push:
@@ -7,28 +7,25 @@ on:
 
 jobs:
   deploy:
-    name: Deploy NGINX to K8s
+    name: Deploy NGINX on remote VPS
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout this repo (optional)
       uses: actions/checkout@v4
 
-    - name: Set up kubectl
-      uses: azure/setup-kubectl@v3
-      with:
-        version: 'latest'
+    - name: Install sshpass
+      run: sudo apt-get update && sudo apt-get install -y sshpass
 
-    - name: Decode and configure kubeconfig
+    - name: Deploy to VPS via SSH
+      env:
+        SSH_USER: debian
+        SSH_HOST: vps2.m89.pl
+        SSH_PASSWORD: ${{ secrets.VPS_PASSWORD }}
       run: |
-        mkdir $HOME/.kube
-        echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > $HOME/.kube/config
-
-    - name: Install gke-gcloud-auth-plugin
-      run: |
-        sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
-
-    - name: Apply Kubernetes manifests
-      run: |
-        kubectl apply -f k8s-nginx-app/deployment.yaml
-        kubectl apply -f k8s-nginx-app/service.yaml
+        sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+          cd /home/debian/my-k8s-app &&
+          git pull &&
+          kubectl apply -f k8s/deployment.yaml &&
+          kubectl apply -f k8s/service.yaml
+        "
