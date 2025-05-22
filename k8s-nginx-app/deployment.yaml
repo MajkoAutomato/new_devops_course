@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: <TU_WSTAW_$IMAGE>
+        image: nginx
         ports:
         - containerPort: 80
