@@ -21,7 +21,7 @@ jobs:
 
     - name: Decode and configure kubeconfig
       run: |
-        mkdir $HOME/.kube/config 
+        mkdir $HOME/.kube
         echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > $HOME/.kube/config
 
     - name: Apply Kubernetes manifests
