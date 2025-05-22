@@ -1,0 +1,29 @@
+name: Build Docker Image on VPS and Push to Registry
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image via VPS
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install sshpass
+      run: sudo apt-get update && sudo apt-get install -y sshpass
+
+    - name: SSH to VPS and build image
+      env:
+        SSH_USER: debian
+        SSH_HOST: vps2.m89.pl
+        SSH_PASSWORD: ${{ secrets.VPS_PASSWORD }}
+        IMAGE_NAME: yourdockeruser/nginx-app:latest
+      run: |
+        sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+          cd /home/debian/repo/k8s-nginx-app &&
+          git pull &&
+          docker build -t $IMAGE_NAME . &&
+          docker push $IMAGE_NAME
+        "
