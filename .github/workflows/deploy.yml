@@ -26,6 +26,6 @@ jobs:
         sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
           cd /home/debian/repo/k8s-nginx-app &&
           git pull &&
-          kubectl apply -f k8s/deployment.yaml &&
-          kubectl apply -f k8s/service.yaml
+          kubectl apply -f deployment.yaml &&
+          kubectl apply -f service.yaml
         "
