@@ -19,7 +19,7 @@ jobs:
         SSH_USER: debian
         SSH_HOST: vps2.m89.pl
         SSH_PASSWORD: ${{ secrets.VPS_PASSWORD }}
-        IMAGE_NAME: yourdockeruser/nginx-app:latest
+        IMAGE_NAME: marak89/nginx-app:latest
       run: |
         sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
           cd /home/debian/repo/k8s-nginx-app &&
